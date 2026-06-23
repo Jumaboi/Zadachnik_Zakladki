@@ -13,10 +13,7 @@ public partial class TasksPage : ContentPage
     {
         InitializeComponent();
         vm = BindingContext as TasksViewModel;
-        StatusFilterPicker.SelectedIndex = 0;
-        SortPicker.SelectedIndex = 0;
-        DueDatePicker.Date = DateTime.UtcNow.AddHours(5).Date;
-        DueTimePicker.Time = DateTime.UtcNow.AddHours(5).TimeOfDay;
+        UpdateModeLabel();
     }
 
     protected override async void OnAppearing()
@@ -28,9 +25,76 @@ public partial class TasksPage : ContentPage
     async Task ReloadAsync()
     {
         if (vm == null) return;
-        await vm.LoadAsync(
-            StatusFilterPicker.SelectedItem?.ToString() ?? "Активные",
-            SortPicker.SelectedItem?.ToString() ?? "Сначала срочные");
+        await vm.LoadAsync();
+        UpdateModeLabel();
+    }
+
+
+    void UpdateModeLabel()
+    {
+        if (vm == null) return;
+        TasksModeLabel.Text = vm.CurrentStatusFilter switch
+        {
+            "Удаленные" => "Удаленные задачи",
+            "Выполненные" => "Выполненные задачи",
+            "Все" => "Все задачи",
+            _ => "Активные задачи"
+        };
+    }
+
+    async Task LoadTasksAsync(string? filter = null, string? sort = null)
+    {
+        if (vm == null) return;
+        await vm.LoadAsync(filter, sort);
+        UpdateModeLabel();
+    }
+
+    async void OnBackClicked(object sender, System.EventArgs e) => await Navigation.PopAsync();
+
+    void OnToggleThemeClicked(object sender, System.EventArgs e)
+    {
+        Application.Current!.UserAppTheme = Application.Current.UserAppTheme == AppTheme.Dark ? AppTheme.Light : AppTheme.Dark;
+    }
+
+    void OnOpenMenuClicked(object sender, System.EventArgs e) => TopMenuOverlay.IsVisible = true;
+    void OnCloseMenuClicked(object sender, System.EventArgs e) => TopMenuOverlay.IsVisible = false;
+
+    async void OnMenuDeletedClicked(object sender, System.EventArgs e)
+    {
+        TopMenuOverlay.IsVisible = false;
+        await LoadTasksAsync("Удаленные");
+    }
+
+    async void OnMenuSettingsClicked(object sender, System.EventArgs e)
+    {
+        TopMenuOverlay.IsVisible = false;
+        await DisplayAlertAsync("Настройки", "Светлая/темная тема переключается кнопкой рядом с меню. Общие настройки можно расширить здесь позже.", "OK");
+    }
+
+    async void OnFilterActiveClicked(object sender, System.EventArgs e) => await LoadTasksAsync("Активные");
+    async void OnFilterInProgressClicked(object sender, System.EventArgs e) => await LoadTasksAsync("В процессе");
+    async void OnFilterDeferredClicked(object sender, System.EventArgs e) => await LoadTasksAsync("Отложенные");
+    async void OnFilterCompletedClicked(object sender, System.EventArgs e) => await LoadTasksAsync("Выполненные");
+    async void OnFilterDeletedClicked(object sender, System.EventArgs e) => await LoadTasksAsync("Удаленные");
+    async void OnFilterAllClicked(object sender, System.EventArgs e) => await LoadTasksAsync("Все");
+    async void OnSortUrgentClicked(object sender, System.EventArgs e) => await LoadTasksAsync(sort: "Сначала срочные");
+    async void OnSortNewestClicked(object sender, System.EventArgs e) => await LoadTasksAsync(sort: "Новые сверху");
+    async void OnSortTitleClicked(object sender, System.EventArgs e) => await LoadTasksAsync(sort: "По заголовку");
+
+    void OnOpenAddTaskClicked(object sender, System.EventArgs e)
+    {
+        AddTaskOverlay.IsVisible = true;
+    }
+
+    void OnCloseAddTaskClicked(object sender, System.EventArgs e)
+    {
+        AddTaskOverlay.IsVisible = false;
+    }
+
+    void OnUseDueDateChanged(object sender, CheckedChangedEventArgs e)
+    {
+        DueDatePanel.IsVisible = e.Value;
+        if (!e.Value) UseReminderCheckBox.IsChecked = false;
     }
 
     async void OnAddTaskClicked(object sender, System.EventArgs e)
@@ -39,7 +103,7 @@ public partial class TasksPage : ContentPage
         var title = TaskTitleEntry.Text?.Trim();
         if (string.IsNullOrWhiteSpace(title))
         {
-            await DisplayAlert("Нужен заголовок", "Введите заголовок задачи.", "OK");
+            await DisplayAlertAsync("Нужен заголовок", "Введите заголовок задачи.", "OK");
             return;
         }
 
@@ -47,7 +111,7 @@ public partial class TasksPage : ContentPage
         DateTime? reminder = null;
         if (UseDueDateCheckBox.IsChecked)
         {
-            due = DueDatePicker.Date.Add(DueTimePicker.Time);
+            due = DueDatePicker.Date.GetValueOrDefault(DateTime.UtcNow.AddHours(5).Date).Add(DueTimePicker.Time);
             if (UseReminderCheckBox.IsChecked) reminder = due;
         }
 
@@ -64,17 +128,17 @@ public partial class TasksPage : ContentPage
         TaskDescriptionEditor.Text = string.Empty;
         UseDueDateCheckBox.IsChecked = false;
         UseReminderCheckBox.IsChecked = false;
+        DueDatePanel.IsVisible = false;
+        AddTaskOverlay.IsVisible = false;
 
         if (reminder.HasValue)
         {
-            await DisplayAlert("Напоминание сохранено", $"Напоминание привязано к {reminder:dd.MM.yyyy HH:mm}.", "OK");
+            await DisplayAlertAsync("Напоминание сохранено", $"Напоминание привязано к {reminder:dd.MM.yyyy HH:mm}.", "OK");
         }
 
-        await this.FadeTo(0.98, 80);
-        await this.FadeTo(1, 140);
+        await this.FadeToAsync(0.98, 80);
+        await this.FadeToAsync(1, 140);
     }
-
-    async void OnFilterChanged(object sender, System.EventArgs e) => await ReloadAsync();
 
     async void OnSetInProgressClicked(object sender, System.EventArgs e) => await SetStatusFromButtonAsync(sender, TaskStatus.InProgress);
 
@@ -88,6 +152,7 @@ public partial class TasksPage : ContentPage
     {
         if (vm == null || sender is not Button b || b.BindingContext is not TaskItem task) return;
         await vm.SetStatusAsync(task.Id, status);
+        UpdateModeLabel();
     }
 
     async void OnDeleteForeverClicked(object sender, System.EventArgs e)
@@ -95,12 +160,13 @@ public partial class TasksPage : ContentPage
         if (vm == null || sender is not Button b || b.BindingContext is not TaskItem task) return;
         if (task.Status != TaskStatus.Deleted)
         {
-            await DisplayAlert("Сначала в удаленные", "Чтобы удалить задачу навсегда, сначала переведите ее в статус «Удален». Потом откройте фильтр «Удаленные» и удалите окончательно.", "OK");
+            await DisplayAlertAsync("Сначала в удаленные", "Чтобы удалить задачу навсегда, сначала переведите ее в статус «Удален». Потом откройте фильтр «Удаленные» и удалите окончательно.", "OK");
             return;
         }
 
-        var ok = await DisplayAlert("Удалить навсегда", "Окончательно удалить задачу без восстановления?", "Да", "Нет");
+        var ok = await DisplayAlertAsync("Удалить навсегда", "Окончательно удалить задачу без восстановления?", "Да", "Нет");
         if (!ok) return;
         await vm.DeleteForeverAsync(task.Id);
+        UpdateModeLabel();
     }
 }

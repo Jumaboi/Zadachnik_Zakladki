@@ -11,6 +11,9 @@ public class Note
     public string Content { get; set; } = string.Empty;
     public List<ChecklistItem> Checklist { get; set; } = new();
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public bool IsDeleted { get; set; }
+
+    public string DeletedBadge => IsDeleted ? "В удаленных" : string.Empty;
 
     public string ChecklistPreview => Checklist.Count == 0
         ? string.Empty
