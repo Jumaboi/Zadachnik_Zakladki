@@ -11,44 +11,87 @@
   <Grid>
     <ScrollView>
       <VerticalStackLayout Padding="18" Spacing="16">
+        <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="10">
+          <Button Text="‹" Clicked="OnBackClicked" Style="{StaticResource TopIconButtonStyle}" />
+          <VerticalStackLayout Grid.Column="1" Spacing="2">
+            <Label Text="Заметки" FontSize="28" FontAttributes="Bold" />
+            <Label x:Name="NotesModeLabel" Text="Активные заметки" Style="{StaticResource MutedLabelStyle}" />
+          </VerticalStackLayout>
+          <Button Grid.Column="2" Text="☾" Clicked="OnToggleThemeClicked" Style="{StaticResource TopIconButtonStyle}" />
+          <Button Grid.Column="3" Text="⋯" Clicked="OnOpenMenuClicked" Style="{StaticResource TopIconButtonStyle}" />
+        </Grid>
+
         <Frame Padding="18">
           <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-            <VerticalStackLayout Spacing="6">
-              <Label Text="Заметки" FontSize="28" FontAttributes="Bold" />
-              <Label Text="Создавайте заметки через отдельное окно — так список остается чистым." Style="{StaticResource MutedLabelStyle}" />
-            </VerticalStackLayout>
+            <Label Text="Создавайте заметки через отдельное окно. Чек-листы можно отмечать прямо в карточке." Style="{StaticResource MutedLabelStyle}" />
             <Button Grid.Column="1" Text="＋" FontSize="24" Clicked="OnOpenAddNoteClicked" Style="{StaticResource PrimaryButtonStyle}" WidthRequest="56" />
           </Grid>
         </Frame>
 
-        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-          <Label Text="Сортировка" VerticalOptions="Center" Style="{StaticResource MutedLabelStyle}" />
-          <Picker x:Name="SortPicker" Grid.Column="1" SelectedIndexChanged="OnSortChanged">
-            <Picker.Items>
-              <x:String>Новые сверху</x:String>
-              <x:String>Старые сверху</x:String>
-              <x:String>По заголовку</x:String>
-            </Picker.Items>
-          </Picker>
-        </Grid>
+        <Label Text="Фильтры" FontAttributes="Bold" />
+        <HorizontalStackLayout Spacing="8">
+          <Button x:Name="ActiveNotesButton" Text="Активные" Clicked="OnShowActiveClicked" Style="{StaticResource FilterButtonStyle}" />
+          <Button x:Name="DeletedNotesButton" Text="Удаленные" Clicked="OnShowDeletedClicked" Style="{StaticResource FilterButtonStyle}" />
+          <Button x:Name="AllNotesButton" Text="Все" Clicked="OnShowAllClicked" Style="{StaticResource FilterButtonStyle}" />
+        </HorizontalStackLayout>
+
+        <Label Text="Сортировка" FontAttributes="Bold" />
+        <HorizontalStackLayout Spacing="8">
+          <Button Text="Новые" Clicked="OnSortNewestClicked" Style="{StaticResource FilterButtonStyle}" />
+          <Button Text="Старые" Clicked="OnSortOldestClicked" Style="{StaticResource FilterButtonStyle}" />
+          <Button Text="А-Я" Clicked="OnSortTitleClicked" Style="{StaticResource FilterButtonStyle}" />
+        </HorizontalStackLayout>
 
         <CollectionView ItemsSource="{Binding Notes}" SelectionMode="None">
           <CollectionView.ItemTemplate>
             <DataTemplate>
               <Frame Margin="0,6" Padding="14">
-                <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto">
-                  <Label Text="{Binding Title}" FontSize="20" FontAttributes="Bold" />
-                  <Button Grid.Column="1" Text="Удалить" Clicked="OnDeleteClicked" Style="{StaticResource GhostButtonStyle}" TextColor="{StaticResource DangerColor}" />
-                  <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Content}" LineBreakMode="WordWrap" Style="{StaticResource MutedLabelStyle}" />
-                  <Label Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding ChecklistPreview}" LineBreakMode="WordWrap" TextColor="{StaticResource AccentColor}" />
-                  <Label Grid.Row="3" Grid.ColumnSpan="2" Text="{Binding CreatedAt, StringFormat='Создано: {0:dd.MM.yyyy HH:mm}'}" FontSize="12" Style="{StaticResource MutedLabelStyle}" />
-                </Grid>
+                <VerticalStackLayout Spacing="8">
+                  <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="6">
+                    <Label Text="{Binding Title}" FontSize="20" FontAttributes="Bold" />
+                    <Button Grid.Column="1" Text="↩" Clicked="OnRestoreNoteClicked" Style="{StaticResource TopIconButtonStyle}" />
+                    <Button Grid.Column="2" Text="🗑" Clicked="OnDeleteClicked" Style="{StaticResource TopIconButtonStyle}" TextColor="{StaticResource DangerColor}" />
+                    <Button Grid.Column="3" Text="✖" Clicked="OnDeleteForeverClicked" Style="{StaticResource TopIconButtonStyle}" TextColor="{StaticResource DangerColor}" />
+                  </Grid>
+                  <Label Text="{Binding DeletedBadge}" TextColor="{StaticResource DangerColor}" FontAttributes="Bold" />
+                  <Label Text="{Binding Content}" LineBreakMode="WordWrap" Style="{StaticResource MutedLabelStyle}" />
+                  <CollectionView ItemsSource="{Binding Checklist}" SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                      <DataTemplate>
+                        <Frame Padding="10" Margin="0,3" HasShadow="False" BackgroundColor="{AppThemeBinding Light={StaticResource LightSoftSurfaceColor}, Dark={StaticResource DarkSoftSurfaceColor}}">
+                          <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnChecklistClicked" />
+                          </Frame.GestureRecognizers>
+                          <Label Text="{Binding DisplayText}">
+                            <Label.Triggers>
+                              <DataTrigger TargetType="Label" Binding="{Binding IsChecked}" Value="True">
+                                <Setter Property="TextDecorations" Value="Strikethrough" />
+                                <Setter Property="TextColor" Value="{StaticResource SuccessColor}" />
+                              </DataTrigger>
+                            </Label.Triggers>
+                          </Label>
+                        </Frame>
+                      </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                  </CollectionView>
+                  <Label Text="{Binding CreatedAt, StringFormat='Создано: {0:dd.MM.yyyy HH:mm}'}" FontSize="12" Style="{StaticResource MutedLabelStyle}" />
+                </VerticalStackLayout>
               </Frame>
             </DataTemplate>
           </CollectionView.ItemTemplate>
         </CollectionView>
       </VerticalStackLayout>
     </ScrollView>
+
+    <Grid x:Name="TopMenuOverlay" IsVisible="False" BackgroundColor="{StaticResource OverlayColor}" Padding="18">
+      <Frame VerticalOptions="Start" HorizontalOptions="End" Padding="14" WidthRequest="250">
+        <VerticalStackLayout Spacing="8">
+          <Button Text="Удаленные заметки" Clicked="OnMenuDeletedClicked" Style="{StaticResource GhostButtonStyle}" />
+          <Button Text="Настройки оформления" Clicked="OnMenuSettingsClicked" Style="{StaticResource GhostButtonStyle}" />
+          <Button Text="Закрыть" Clicked="OnCloseMenuClicked" Style="{StaticResource GhostButtonStyle}" />
+        </VerticalStackLayout>
+      </Frame>
+    </Grid>
 
     <Grid x:Name="AddNoteOverlay" IsVisible="False" BackgroundColor="{StaticResource OverlayColor}" Padding="18">
       <Frame VerticalOptions="Center" Padding="18">
