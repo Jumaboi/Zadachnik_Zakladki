@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net8.0-android</TargetFrameworks>
+    <TargetFramework>net10.0-android35.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <RootNamespace>MyNotesApp</RootNamespace>
     <UseMaui>true</UseMaui>
@@ -11,6 +11,9 @@
     <ApplicationId>com.zadachnik.zakladki</ApplicationId>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
+    <!-- Минимальная поддерживаемая версия Android: Android 6.0 (API 23).
+         TargetPlatformVersion задан в TargetFramework как android35.0, поэтому
+         SupportedOSPlatformVersion больше не превышает целевую платформу. -->
     <SupportedOSPlatformVersion>23.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
