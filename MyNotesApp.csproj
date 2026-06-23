@@ -18,6 +18,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <MauiIcon Include="Resources\AppIcon\appicon.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.20" />
   </ItemGroup>
 
