@@ -13,9 +13,9 @@ public partial class MainPage : ContentPage
     {
         base.OnAppearing();
         // Простая анимация появления заголовка
-        await TitleLabel.FadeTo(1, 400, Easing.CubicIn);
-        await TitleLabel.ScaleTo(1.02, 200);
-        await TitleLabel.ScaleTo(1, 120);
+        await TitleLabel.FadeToAsync(1, 400, Easing.CubicIn);
+        await TitleLabel.ScaleToAsync(1.02, 200);
+        await TitleLabel.ScaleToAsync(1, 120);
     }
 
     async void OnNotesClicked(object sender, System.EventArgs e)

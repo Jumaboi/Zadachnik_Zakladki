@@ -39,7 +39,7 @@ public partial class TasksPage : ContentPage
         var title = TaskTitleEntry.Text?.Trim();
         if (string.IsNullOrWhiteSpace(title))
         {
-            await DisplayAlert("Нужен заголовок", "Введите заголовок задачи.", "OK");
+            await DisplayAlertAsync("Нужен заголовок", "Введите заголовок задачи.", "OK");
             return;
         }
 
@@ -47,7 +47,7 @@ public partial class TasksPage : ContentPage
         DateTime? reminder = null;
         if (UseDueDateCheckBox.IsChecked)
         {
-            due = DueDatePicker.Date.Add(DueTimePicker.Time);
+            due = DueDatePicker.Date.GetValueOrDefault(DateTime.UtcNow.AddHours(5).Date).Add(DueTimePicker.Time);
             if (UseReminderCheckBox.IsChecked) reminder = due;
         }
 
@@ -67,11 +67,11 @@ public partial class TasksPage : ContentPage
 
         if (reminder.HasValue)
         {
-            await DisplayAlert("Напоминание сохранено", $"Напоминание привязано к {reminder:dd.MM.yyyy HH:mm}.", "OK");
+            await DisplayAlertAsync("Напоминание сохранено", $"Напоминание привязано к {reminder:dd.MM.yyyy HH:mm}.", "OK");
         }
 
-        await this.FadeTo(0.98, 80);
-        await this.FadeTo(1, 140);
+        await this.FadeToAsync(0.98, 80);
+        await this.FadeToAsync(1, 140);
     }
 
     async void OnFilterChanged(object sender, System.EventArgs e) => await ReloadAsync();
@@ -95,11 +95,11 @@ public partial class TasksPage : ContentPage
         if (vm == null || sender is not Button b || b.BindingContext is not TaskItem task) return;
         if (task.Status != TaskStatus.Deleted)
         {
-            await DisplayAlert("Сначала в удаленные", "Чтобы удалить задачу навсегда, сначала переведите ее в статус «Удален». Потом откройте фильтр «Удаленные» и удалите окончательно.", "OK");
+            await DisplayAlertAsync("Сначала в удаленные", "Чтобы удалить задачу навсегда, сначала переведите ее в статус «Удален». Потом откройте фильтр «Удаленные» и удалите окончательно.", "OK");
             return;
         }
 
-        var ok = await DisplayAlert("Удалить навсегда", "Окончательно удалить задачу без восстановления?", "Да", "Нет");
+        var ok = await DisplayAlertAsync("Удалить навсегда", "Окончательно удалить задачу без восстановления?", "Да", "Нет");
         if (!ok) return;
         await vm.DeleteForeverAsync(task.Id);
     }
