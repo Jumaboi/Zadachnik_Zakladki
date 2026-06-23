@@ -21,13 +21,23 @@ public partial class NotesPage : ContentPage
         if (vm != null) await vm.LoadAsync(SortPicker.SelectedItem?.ToString() ?? "Новые сверху");
     }
 
+    void OnOpenAddNoteClicked(object sender, System.EventArgs e)
+    {
+        AddNoteOverlay.IsVisible = true;
+    }
+
+    void OnCloseAddNoteClicked(object sender, System.EventArgs e)
+    {
+        AddNoteOverlay.IsVisible = false;
+    }
+
     async void OnAddNoteClicked(object sender, System.EventArgs e)
     {
         if (vm == null) return;
         var title = NoteTitleEntry.Text?.Trim();
         if (string.IsNullOrWhiteSpace(title))
         {
-            await DisplayAlert("Нужен заголовок", "Введите заголовок заметки.", "OK");
+            await DisplayAlertAsync("Нужен заголовок", "Введите заголовок заметки.", "OK");
             return;
         }
 
@@ -46,14 +56,15 @@ public partial class NotesPage : ContentPage
         NoteTitleEntry.Text = string.Empty;
         NoteContentEditor.Text = string.Empty;
         ChecklistEditor.Text = string.Empty;
-        await this.FadeTo(0.98, 80);
-        await this.FadeTo(1, 140);
+        AddNoteOverlay.IsVisible = false;
+        await this.FadeToAsync(0.98, 80);
+        await this.FadeToAsync(1, 140);
     }
 
     async void OnDeleteClicked(object sender, System.EventArgs e)
     {
         if (vm == null || sender is not Button b || b.BindingContext is not Note note) return;
-        var ok = await DisplayAlert("Подтвердить", "Удалить заметку?", "Да", "Нет");
+        var ok = await DisplayAlertAsync("Подтвердить", "Удалить заметку?", "Да", "Нет");
         if (!ok) return;
         await vm.DeleteNoteAsync(note.Id);
     }

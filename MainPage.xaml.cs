@@ -13,9 +13,24 @@ public partial class MainPage : ContentPage
     {
         base.OnAppearing();
         // Простая анимация появления заголовка
-        await TitleLabel.FadeTo(1, 400, Easing.CubicIn);
-        await TitleLabel.ScaleTo(1.02, 200);
-        await TitleLabel.ScaleTo(1, 120);
+        await TitleLabel.FadeToAsync(1, 400, Easing.CubicIn);
+        await TitleLabel.ScaleToAsync(1.02, 200);
+        await TitleLabel.ScaleToAsync(1, 120);
+    }
+
+    void OnLightThemeClicked(object sender, System.EventArgs e)
+    {
+        Application.Current!.UserAppTheme = AppTheme.Light;
+    }
+
+    void OnDarkThemeClicked(object sender, System.EventArgs e)
+    {
+        Application.Current!.UserAppTheme = AppTheme.Dark;
+    }
+
+    void OnSystemThemeClicked(object sender, System.EventArgs e)
+    {
+        Application.Current!.UserAppTheme = AppTheme.Unspecified;
     }
 
     async void OnNotesClicked(object sender, System.EventArgs e)

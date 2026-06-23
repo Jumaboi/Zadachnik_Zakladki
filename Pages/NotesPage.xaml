@@ -3,50 +3,66 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:MyNotesApp.ViewModels"
              x:Class="MyNotesApp.Pages.NotesPage"
-             Title="Заметки"
-             BackgroundColor="{DynamicResource BackgroundColor}">
+             Title="Заметки">
   <ContentPage.BindingContext>
     <vm:NotesViewModel />
   </ContentPage.BindingContext>
 
-  <ScrollView>
-    <VerticalStackLayout Padding="18" Spacing="16">
-      <Frame CornerRadius="24" Padding="18" HasShadow="True" BackgroundColor="#F6F1FF">
+  <Grid>
+    <ScrollView>
+      <VerticalStackLayout Padding="18" Spacing="16">
+        <Frame Padding="18">
+          <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+            <VerticalStackLayout Spacing="6">
+              <Label Text="Заметки" FontSize="28" FontAttributes="Bold" />
+              <Label Text="Создавайте заметки через отдельное окно — так список остается чистым." Style="{StaticResource MutedLabelStyle}" />
+            </VerticalStackLayout>
+            <Button Grid.Column="1" Text="＋" FontSize="24" Clicked="OnOpenAddNoteClicked" Style="{StaticResource PrimaryButtonStyle}" WidthRequest="56" />
+          </Grid>
+        </Frame>
+
+        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+          <Label Text="Сортировка" VerticalOptions="Center" Style="{StaticResource MutedLabelStyle}" />
+          <Picker x:Name="SortPicker" Grid.Column="1" SelectedIndexChanged="OnSortChanged">
+            <Picker.Items>
+              <x:String>Новые сверху</x:String>
+              <x:String>Старые сверху</x:String>
+              <x:String>По заголовку</x:String>
+            </Picker.Items>
+          </Picker>
+        </Grid>
+
+        <CollectionView ItemsSource="{Binding Notes}" SelectionMode="None">
+          <CollectionView.ItemTemplate>
+            <DataTemplate>
+              <Frame Margin="0,6" Padding="14">
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+                  <Label Text="{Binding Title}" FontSize="20" FontAttributes="Bold" />
+                  <Button Grid.Column="1" Text="Удалить" Clicked="OnDeleteClicked" Style="{StaticResource GhostButtonStyle}" TextColor="{StaticResource DangerColor}" />
+                  <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Content}" LineBreakMode="WordWrap" Style="{StaticResource MutedLabelStyle}" />
+                  <Label Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding ChecklistPreview}" LineBreakMode="WordWrap" TextColor="{StaticResource AccentColor}" />
+                  <Label Grid.Row="3" Grid.ColumnSpan="2" Text="{Binding CreatedAt, StringFormat='Создано: {0:dd.MM.yyyy HH:mm}'}" FontSize="12" Style="{StaticResource MutedLabelStyle}" />
+                </Grid>
+              </Frame>
+            </DataTemplate>
+          </CollectionView.ItemTemplate>
+        </CollectionView>
+      </VerticalStackLayout>
+    </ScrollView>
+
+    <Grid x:Name="AddNoteOverlay" IsVisible="False" BackgroundColor="{StaticResource OverlayColor}" Padding="18">
+      <Frame VerticalOptions="Center" Padding="18">
         <VerticalStackLayout Spacing="12">
-          <Label Text="Полноэкранная заметка" FontSize="26" FontAttributes="Bold" TextColor="#0B2545" />
+          <Grid ColumnDefinitions="*,Auto">
+            <Label Text="Новая заметка" FontSize="24" FontAttributes="Bold" />
+            <Button Grid.Column="1" Text="✕" Clicked="OnCloseAddNoteClicked" Style="{StaticResource GhostButtonStyle}" />
+          </Grid>
           <Entry x:Name="NoteTitleEntry" Placeholder="Заголовок" FontSize="20" />
-          <Editor x:Name="NoteContentEditor" Placeholder="Текст заметки" AutoSize="TextChanges" MinimumHeightRequest="170" />
-          <Editor x:Name="ChecklistEditor" Placeholder="Чек-боксы: каждая строка — отдельный пункт" AutoSize="TextChanges" MinimumHeightRequest="95" />
-          <Button Text="Добавить заметку" Clicked="OnAddNoteClicked" BackgroundColor="#5B2EE6" TextColor="White" CornerRadius="16" HeightRequest="50" />
+          <Editor x:Name="NoteContentEditor" Placeholder="Текст заметки" AutoSize="TextChanges" MinimumHeightRequest="150" />
+          <Editor x:Name="ChecklistEditor" Placeholder="Чек-лист: каждая строка — отдельный пункт" AutoSize="TextChanges" MinimumHeightRequest="90" />
+          <Button Text="Сохранить заметку" Clicked="OnAddNoteClicked" Style="{StaticResource PrimaryButtonStyle}" />
         </VerticalStackLayout>
       </Frame>
-
-      <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-        <Label Text="Сортировка" VerticalOptions="Center" TextColor="{DynamicResource SecondaryTextColor}" />
-        <Picker x:Name="SortPicker" Grid.Column="1" SelectedIndexChanged="OnSortChanged">
-          <Picker.Items>
-            <x:String>Новые сверху</x:String>
-            <x:String>Старые сверху</x:String>
-            <x:String>По заголовку</x:String>
-          </Picker.Items>
-        </Picker>
-      </Grid>
-
-      <CollectionView ItemsSource="{Binding Notes}" SelectionMode="None">
-        <CollectionView.ItemTemplate>
-          <DataTemplate>
-            <Frame Margin="0,6" CornerRadius="18" HasShadow="True" BackgroundColor="White">
-              <Grid Padding="14" RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto">
-                <Label Text="{Binding Title}" FontSize="20" FontAttributes="Bold" TextColor="{DynamicResource PrimaryTextColor}" />
-                <Button Grid.Column="1" Text="Удалить" Clicked="OnDeleteClicked" BackgroundColor="Transparent" TextColor="#C62828" />
-                <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Content}" LineBreakMode="WordWrap" TextColor="{DynamicResource SecondaryTextColor}" />
-                <Label Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding ChecklistPreview}" LineBreakMode="WordWrap" TextColor="#5B2EE6" />
-                <Label Grid.Row="3" Grid.ColumnSpan="2" Text="{Binding CreatedAt, StringFormat='Создано: {0:dd.MM.yyyy HH:mm}'}" FontSize="12" TextColor="#78909C" />
-              </Grid>
-            </Frame>
-          </DataTemplate>
-        </CollectionView.ItemTemplate>
-      </CollectionView>
-    </VerticalStackLayout>
-  </ScrollView>
+    </Grid>
+  </Grid>
 </ContentPage>
