@@ -18,6 +18,21 @@ public partial class MainPage : ContentPage
         await TitleLabel.ScaleToAsync(1, 120);
     }
 
+    void OnLightThemeClicked(object sender, System.EventArgs e)
+    {
+        Application.Current!.UserAppTheme = AppTheme.Light;
+    }
+
+    void OnDarkThemeClicked(object sender, System.EventArgs e)
+    {
+        Application.Current!.UserAppTheme = AppTheme.Dark;
+    }
+
+    void OnSystemThemeClicked(object sender, System.EventArgs e)
+    {
+        Application.Current!.UserAppTheme = AppTheme.Unspecified;
+    }
+
     async void OnNotesClicked(object sender, System.EventArgs e)
     {
         await Navigation.PushAsync(new Pages.NotesPage());

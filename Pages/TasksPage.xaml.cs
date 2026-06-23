@@ -15,8 +15,6 @@ public partial class TasksPage : ContentPage
         vm = BindingContext as TasksViewModel;
         StatusFilterPicker.SelectedIndex = 0;
         SortPicker.SelectedIndex = 0;
-        DueDatePicker.Date = DateTime.UtcNow.AddHours(5).Date;
-        DueTimePicker.Time = DateTime.UtcNow.AddHours(5).TimeOfDay;
     }
 
     protected override async void OnAppearing()
@@ -31,6 +29,22 @@ public partial class TasksPage : ContentPage
         await vm.LoadAsync(
             StatusFilterPicker.SelectedItem?.ToString() ?? "Активные",
             SortPicker.SelectedItem?.ToString() ?? "Сначала срочные");
+    }
+
+    void OnOpenAddTaskClicked(object sender, System.EventArgs e)
+    {
+        AddTaskOverlay.IsVisible = true;
+    }
+
+    void OnCloseAddTaskClicked(object sender, System.EventArgs e)
+    {
+        AddTaskOverlay.IsVisible = false;
+    }
+
+    void OnUseDueDateChanged(object sender, CheckedChangedEventArgs e)
+    {
+        DueDatePanel.IsVisible = e.Value;
+        if (!e.Value) UseReminderCheckBox.IsChecked = false;
     }
 
     async void OnAddTaskClicked(object sender, System.EventArgs e)
@@ -64,6 +78,8 @@ public partial class TasksPage : ContentPage
         TaskDescriptionEditor.Text = string.Empty;
         UseDueDateCheckBox.IsChecked = false;
         UseReminderCheckBox.IsChecked = false;
+        DueDatePanel.IsVisible = false;
+        AddTaskOverlay.IsVisible = false;
 
         if (reminder.HasValue)
         {

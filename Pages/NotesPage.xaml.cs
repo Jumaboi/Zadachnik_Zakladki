@@ -21,6 +21,16 @@ public partial class NotesPage : ContentPage
         if (vm != null) await vm.LoadAsync(SortPicker.SelectedItem?.ToString() ?? "Новые сверху");
     }
 
+    void OnOpenAddNoteClicked(object sender, System.EventArgs e)
+    {
+        AddNoteOverlay.IsVisible = true;
+    }
+
+    void OnCloseAddNoteClicked(object sender, System.EventArgs e)
+    {
+        AddNoteOverlay.IsVisible = false;
+    }
+
     async void OnAddNoteClicked(object sender, System.EventArgs e)
     {
         if (vm == null) return;
@@ -46,6 +56,7 @@ public partial class NotesPage : ContentPage
         NoteTitleEntry.Text = string.Empty;
         NoteContentEditor.Text = string.Empty;
         ChecklistEditor.Text = string.Empty;
+        AddNoteOverlay.IsVisible = false;
         await this.FadeToAsync(0.98, 80);
         await this.FadeToAsync(1, 140);
     }
