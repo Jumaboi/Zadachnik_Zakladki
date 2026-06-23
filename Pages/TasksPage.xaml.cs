@@ -1,41 +1,106 @@
 using Microsoft.Maui.Controls;
 using MyNotesApp.Models;
 using MyNotesApp.ViewModels;
+using TaskStatus = MyNotesApp.Models.TaskStatus;
 
 namespace MyNotesApp.Pages;
 
 public partial class TasksPage : ContentPage
 {
-    TasksViewModel vm;
+    readonly TasksViewModel? vm;
+
     public TasksPage()
     {
         InitializeComponent();
         vm = BindingContext as TasksViewModel;
+        StatusFilterPicker.SelectedIndex = 0;
+        SortPicker.SelectedIndex = 0;
+        DueDatePicker.Date = DateTime.UtcNow.AddHours(5).Date;
+        DueTimePicker.Time = DateTime.UtcNow.AddHours(5).TimeOfDay;
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        if (vm != null) await vm.LoadAsync();
+        await ReloadAsync();
+    }
+
+    async Task ReloadAsync()
+    {
+        if (vm == null) return;
+        await vm.LoadAsync(
+            StatusFilterPicker.SelectedItem?.ToString() ?? "Активные",
+            SortPicker.SelectedItem?.ToString() ?? "Сначала срочные");
     }
 
     async void OnAddTaskClicked(object sender, System.EventArgs e)
     {
-        var title = await DisplayPromptAsync("Новая задача", "Заголовок", maxLength: 100);
-        if (string.IsNullOrWhiteSpace(title)) return;
-        var desc = await DisplayPromptAsync("Новая задача", "Описание (необязательно)", maxLength: 200, keyboard: Keyboard.Text);
-        var dateStr = await DisplayPromptAsync("Новая задача", "Дедлайн (YYYY-MM-DD HH:MM) или оставить пустым", placeholder: "2026-06-30 18:00");
+        if (vm == null) return;
+        var title = TaskTitleEntry.Text?.Trim();
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            await DisplayAlert("Нужен заголовок", "Введите заголовок задачи.", "OK");
+            return;
+        }
+
         DateTime? due = null;
-        if (!string.IsNullOrWhiteSpace(dateStr) && DateTime.TryParse(dateStr, out var d)) due = d;
-        await vm.AddTaskAsync(new TaskItem { Title = title, Description = desc, DueDate = due });
-        // Простая анимация подтверждения добавления
+        DateTime? reminder = null;
+        if (UseDueDateCheckBox.IsChecked)
+        {
+            due = DueDatePicker.Date.Add(DueTimePicker.Time);
+            if (UseReminderCheckBox.IsChecked) reminder = due;
+        }
+
+        await vm.AddTaskAsync(new TaskItem
+        {
+            Title = title,
+            Description = TaskDescriptionEditor.Text?.Trim(),
+            DueDate = due,
+            ReminderAt = reminder,
+            CreatedAt = DateTime.UtcNow.AddHours(5)
+        });
+
+        TaskTitleEntry.Text = string.Empty;
+        TaskDescriptionEditor.Text = string.Empty;
+        UseDueDateCheckBox.IsChecked = false;
+        UseReminderCheckBox.IsChecked = false;
+
+        if (reminder.HasValue)
+        {
+            await DisplayAlert("Напоминание сохранено", $"Напоминание привязано к {reminder:dd.MM.yyyy HH:mm}.", "OK");
+        }
+
         await this.FadeTo(0.98, 80);
         await this.FadeTo(1, 140);
     }
 
-    async void OnCompleteClicked(object sender, System.EventArgs e)
+    async void OnFilterChanged(object sender, System.EventArgs e) => await ReloadAsync();
+
+    async void OnSetInProgressClicked(object sender, System.EventArgs e) => await SetStatusFromButtonAsync(sender, TaskStatus.InProgress);
+
+    async void OnSetDeferredClicked(object sender, System.EventArgs e) => await SetStatusFromButtonAsync(sender, TaskStatus.Deferred);
+
+    async void OnSetCompletedClicked(object sender, System.EventArgs e) => await SetStatusFromButtonAsync(sender, TaskStatus.Completed);
+
+    async void OnMoveToDeletedClicked(object sender, System.EventArgs e) => await SetStatusFromButtonAsync(sender, TaskStatus.Deleted);
+
+    async Task SetStatusFromButtonAsync(object sender, TaskStatus status)
     {
-        if (!(sender is Button b) || b.BindingContext is not TaskItem t) return;
-        await vm.ToggleCompleteAsync(t.Id);
+        if (vm == null || sender is not Button b || b.BindingContext is not TaskItem task) return;
+        await vm.SetStatusAsync(task.Id, status);
+    }
+
+    async void OnDeleteForeverClicked(object sender, System.EventArgs e)
+    {
+        if (vm == null || sender is not Button b || b.BindingContext is not TaskItem task) return;
+        if (task.Status != TaskStatus.Deleted)
+        {
+            await DisplayAlert("Сначала в удаленные", "Чтобы удалить задачу навсегда, сначала переведите ее в статус «Удален». Потом откройте фильтр «Удаленные» и удалите окончательно.", "OK");
+            return;
+        }
+
+        var ok = await DisplayAlert("Удалить навсегда", "Окончательно удалить задачу без восстановления?", "Да", "Нет");
+        if (!ok) return;
+        await vm.DeleteForeverAsync(task.Id);
     }
 }
