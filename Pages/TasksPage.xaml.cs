@@ -127,7 +127,7 @@ public partial class TasksPage : ContentPage
         DateTime? reminder = null;
         if (UseDueDateCheckBox.IsChecked)
         {
-            due = DueDatePicker.Date.GetValueOrDefault(DateTime.UtcNow.AddHours(5).Date).Add(DueTimePicker.Time);
+            due = DueDatePicker.Date.GetValueOrDefault(DateTime.UtcNow.AddHours(5).Date).Add((TimeSpan)DueTimePicker.Time);
             if (UseReminderCheckBox.IsChecked) reminder = due;
         }
 
