@@ -79,6 +79,16 @@ public partial class NotesPage : ContentPage
         AddNoteOverlay.IsVisible = false;
     }
 
+    void OnOpenAddNoteClicked(object sender, System.EventArgs e)
+    {
+        AddNoteOverlay.IsVisible = true;
+    }
+
+    void OnCloseAddNoteClicked(object sender, System.EventArgs e)
+    {
+        AddNoteOverlay.IsVisible = false;
+    }
+
     async void OnAddNoteClicked(object sender, System.EventArgs e)
     {
         if (vm == null) return;
