@@ -5,35 +5,81 @@
              x:Class="MyNotesApp.Pages.TasksPage"
              Title="Задачник"
              BackgroundColor="{DynamicResource BackgroundColor}">
-
   <ContentPage.BindingContext>
     <vm:TasksViewModel />
   </ContentPage.BindingContext>
 
-  <ContentPage.ToolbarItems>
-    <ToolbarItem Text="Добавить" Clicked="OnAddTaskClicked"/>
-  </ContentPage.ToolbarItems>
+  <ScrollView>
+    <VerticalStackLayout Padding="18" Spacing="16">
+      <Frame CornerRadius="24" Padding="18" HasShadow="True" BackgroundColor="#EEF7FF">
+        <VerticalStackLayout Spacing="12">
+          <Label Text="Новая задача" FontSize="26" FontAttributes="Bold" TextColor="#0B2545" />
+          <Entry x:Name="TaskTitleEntry" Placeholder="Заголовок" FontSize="20" />
+          <Editor x:Name="TaskDescriptionEditor" Placeholder="Описание, детали, ссылки" AutoSize="TextChanges" MinimumHeightRequest="95" />
+          <DatePicker x:Name="DueDatePicker" />
+          <TimePicker x:Name="DueTimePicker" />
+          <HorizontalStackLayout Spacing="8">
+            <CheckBox x:Name="UseDueDateCheckBox" />
+            <Label Text="Установить срок выполнения" VerticalOptions="Center" />
+          </HorizontalStackLayout>
+          <HorizontalStackLayout Spacing="8">
+            <CheckBox x:Name="UseReminderCheckBox" />
+            <Label Text="Напомнить в это же время" VerticalOptions="Center" />
+          </HorizontalStackLayout>
+          <Button Text="Добавить задачу" Clicked="OnAddTaskClicked" BackgroundColor="#0B2545" TextColor="White" CornerRadius="16" HeightRequest="50" />
+          <Label Text="Дата добавления сохраняется автоматически по UTC+5 (Худжанд). Уведомление можно привязать к сроку задачи." FontSize="12" TextColor="#607D8B" />
+        </VerticalStackLayout>
+      </Frame>
 
-  <ContentPage.Content>
-    <CollectionView ItemsSource="{Binding Tasks}" SelectionMode="None">
-      <CollectionView.ItemTemplate>
-        <DataTemplate>
-          <Frame Margin="8" CornerRadius="8" HasShadow="True" BackgroundColor="White">
-            <Grid Padding="12">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-              </Grid.ColumnDefinitions>
-              <StackLayout>
-                <Label Text="{Binding Title}" FontAttributes="Bold" TextColor="{DynamicResource PrimaryTextColor}"/>
-                <Label Text="{Binding Description}" LineBreakMode="TailTruncation" TextColor="{DynamicResource SecondaryTextColor}"/>
-                <Label Text="{Binding DueDate, StringFormat='Дедлайн: {0:G}'}" TextColor="{DynamicResource SecondaryTextColor}"/>
-              </StackLayout>
-              <Button Grid.Column="1" Text="Готово" Clicked="OnCompleteClicked" BackgroundColor="Transparent" TextColor="{DynamicResource AccentColor}"/>
-            </Grid>
-          </Frame>
-        </DataTemplate>
-      </CollectionView.ItemTemplate>
-    </CollectionView>
-  </ContentPage.Content>
+      <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="Auto,*" ColumnSpacing="10" RowSpacing="8">
+        <Label Text="Статус" VerticalOptions="Center" TextColor="{DynamicResource SecondaryTextColor}" />
+        <Picker x:Name="StatusFilterPicker" Grid.Column="1" SelectedIndexChanged="OnFilterChanged">
+          <Picker.Items>
+            <x:String>Активные</x:String>
+            <x:String>В процессе</x:String>
+            <x:String>Отложенные</x:String>
+            <x:String>Выполненные</x:String>
+            <x:String>Удаленные</x:String>
+            <x:String>Все</x:String>
+          </Picker.Items>
+        </Picker>
+        <Label Grid.Row="1" Text="Сортировка" VerticalOptions="Center" TextColor="{DynamicResource SecondaryTextColor}" />
+        <Picker x:Name="SortPicker" Grid.Row="1" Grid.Column="1" SelectedIndexChanged="OnFilterChanged">
+          <Picker.Items>
+            <x:String>Сначала срочные</x:String>
+            <x:String>Новые сверху</x:String>
+            <x:String>Старые сверху</x:String>
+            <x:String>По статусу</x:String>
+            <x:String>По заголовку</x:String>
+          </Picker.Items>
+        </Picker>
+      </Grid>
+
+      <CollectionView ItemsSource="{Binding Tasks}" SelectionMode="None">
+        <CollectionView.ItemTemplate>
+          <DataTemplate>
+            <Frame Margin="0,6" CornerRadius="18" HasShadow="True" BackgroundColor="White">
+              <VerticalStackLayout Padding="14" Spacing="8">
+                <Grid ColumnDefinitions="*,Auto">
+                  <Label Text="{Binding Title}" FontSize="20" FontAttributes="Bold" TextColor="{DynamicResource PrimaryTextColor}" />
+                  <Label Grid.Column="1" Text="{Binding StatusDisplay}" TextColor="#5B2EE6" FontAttributes="Bold" />
+                </Grid>
+                <Label Text="{Binding Description}" LineBreakMode="WordWrap" TextColor="{DynamicResource SecondaryTextColor}" />
+                <Label Text="{Binding CreatedAtDisplay}" FontSize="12" TextColor="#78909C" />
+                <Label Text="{Binding DueDateDisplay}" TextColor="#0B2545" />
+                <Label Text="{Binding ReminderDisplay}" TextColor="#00796B" />
+                <FlexLayout Wrap="Wrap" AlignItems="Center" JustifyContent="Start">
+                  <Button Text="В процессе" Clicked="OnSetInProgressClicked" Margin="0,4,6,0" />
+                  <Button Text="Отложить" Clicked="OnSetDeferredClicked" Margin="0,4,6,0" />
+                  <Button Text="Выполнено" Clicked="OnSetCompletedClicked" Margin="0,4,6,0" />
+                  <Button Text="В удаленные" Clicked="OnMoveToDeletedClicked" Margin="0,4,6,0" TextColor="#C62828" />
+                  <Button Text="Удалить навсегда" Clicked="OnDeleteForeverClicked" Margin="0,4,6,0" TextColor="#C62828" />
+                </FlexLayout>
+              </VerticalStackLayout>
+            </Frame>
+          </DataTemplate>
+        </CollectionView.ItemTemplate>
+      </CollectionView>
+    </VerticalStackLayout>
+  </ScrollView>
 </ContentPage>
