@@ -5,7 +5,7 @@
              Title="Главная">
   <ScrollView>
     <VerticalStackLayout Padding="24" Spacing="18">
-      <Frame Padding="22" BackgroundColor="{AppThemeBinding Light={StaticResource LightSurfaceColor}, Dark={StaticResource DarkSurfaceColor}}">
+      <Border Padding="22" BackgroundColor="{AppThemeBinding Light={StaticResource LightSurfaceColor}, Dark={StaticResource DarkSurfaceColor}}">
         <VerticalStackLayout Spacing="16" HorizontalOptions="Center">
           <Border WidthRequest="92" HeightRequest="92" StrokeThickness="0" BackgroundColor="{StaticResource AccentColor}">
             <Border.StrokeShape>
@@ -16,28 +16,28 @@
           <Label x:Name="TitleLabel" Text="Задачник и Заметки" FontSize="30" FontAttributes="Bold" HorizontalTextAlignment="Center" Opacity="0" />
           <Label Text="Быстрый доступ к заметкам и задачам. Разделы оформлены карточками — позже сюда можно добавить новые модули." Style="{StaticResource MutedLabelStyle}" HorizontalTextAlignment="Center" />
         </VerticalStackLayout>
-      </Frame>
+      </Border>
 
       <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
-        <Frame Padding="18">
+        <Border Padding="18">
           <VerticalStackLayout Spacing="12">
             <Label Text="📝" FontSize="34" />
             <Label Text="Заметки" FontSize="22" FontAttributes="Bold" />
             <Label Text="Идеи, списки и чек-листы." Style="{StaticResource MutedLabelStyle}" />
             <Button Text="Открыть" Clicked="OnNotesClicked" Style="{StaticResource PrimaryButtonStyle}" />
           </VerticalStackLayout>
-        </Frame>
-        <Frame Grid.Column="1" Padding="18">
+        </Border>
+        <Border Grid.Column="1" Padding="18">
           <VerticalStackLayout Spacing="12">
             <Label Text="✅" FontSize="34" />
             <Label Text="Задачник" FontSize="22" FontAttributes="Bold" />
             <Label Text="Сроки, статусы и напоминания." Style="{StaticResource MutedLabelStyle}" />
             <Button Text="Открыть" Clicked="OnTasksClicked" Style="{StaticResource SecondaryButtonStyle}" />
           </VerticalStackLayout>
-        </Frame>
+        </Border>
       </Grid>
 
-      <Frame Padding="18">
+      <Border Padding="18">
         <VerticalStackLayout Spacing="10">
           <Label Text="Режим оформления" FontSize="20" FontAttributes="Bold" />
           <Label Text="Выберите светлый, темный или системный режим." Style="{StaticResource MutedLabelStyle}" />
@@ -47,7 +47,7 @@
             <Button Grid.Column="2" Text="Система" Clicked="OnSystemThemeClicked" Style="{StaticResource GhostButtonStyle}" />
           </Grid>
         </VerticalStackLayout>
-      </Frame>
+      </Border>
     </VerticalStackLayout>
   </ScrollView>
 </ContentPage>

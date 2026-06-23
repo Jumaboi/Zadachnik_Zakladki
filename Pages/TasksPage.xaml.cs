@@ -97,22 +97,6 @@ public partial class TasksPage : ContentPage
         if (!e.Value) UseReminderCheckBox.IsChecked = false;
     }
 
-    void OnOpenAddTaskClicked(object sender, System.EventArgs e)
-    {
-        AddTaskOverlay.IsVisible = true;
-    }
-
-    void OnCloseAddTaskClicked(object sender, System.EventArgs e)
-    {
-        AddTaskOverlay.IsVisible = false;
-    }
-
-    void OnUseDueDateChanged(object sender, CheckedChangedEventArgs e)
-    {
-        DueDatePanel.IsVisible = e.Value;
-        if (!e.Value) UseReminderCheckBox.IsChecked = false;
-    }
-
     async void OnAddTaskClicked(object sender, System.EventArgs e)
     {
         if (vm == null) return;
@@ -127,7 +111,7 @@ public partial class TasksPage : ContentPage
         DateTime? reminder = null;
         if (UseDueDateCheckBox.IsChecked)
         {
-            due = DueDatePicker.Date.GetValueOrDefault(DateTime.UtcNow.AddHours(5).Date).Add((TimeSpan)DueTimePicker.Time);
+            due = DueDatePicker.Date.GetValueOrDefault(DateTime.UtcNow.AddHours(5).Date).Add(DueTimePicker.Time);
             if (UseReminderCheckBox.IsChecked) reminder = due;
         }
 

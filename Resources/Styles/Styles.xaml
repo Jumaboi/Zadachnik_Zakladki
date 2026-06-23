@@ -27,11 +27,13 @@
     <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light={StaticResource LightSecondaryTextColor}, Dark={StaticResource DarkSecondaryTextColor}}" />
   </Style>
 
-  <Style TargetType="Frame">
+  <Style TargetType="Border">
     <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource LightSurfaceColor}, Dark={StaticResource DarkSurfaceColor}}" />
-    <Setter Property="BorderColor" Value="Transparent" />
-    <Setter Property="CornerRadius" Value="22" />
-    <Setter Property="HasShadow" Value="True" />
+    <Setter Property="Stroke" Value="Transparent" />
+    <Setter Property="StrokeThickness" Value="0" />
+    <Setter Property="StrokeShape">
+      <RoundRectangle CornerRadius="22" />
+    </Setter>
   </Style>
 
   <Style x:Key="PrimaryButtonStyle" TargetType="Button">
