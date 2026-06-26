@@ -18,26 +18,29 @@
         </VerticalStackLayout>
       </Border>
 
-      <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
-        <Border Padding="18">
-          <VerticalStackLayout Spacing="12">
-            <Label Text="📝" FontSize="34" />
-            <Label Text="Заметки" FontSize="22" FontAttributes="Bold" />
-            <Label Text="Идеи, списки и чек-листы." Style="{StaticResource MutedLabelStyle}" />
-            <Button Text="Открыть" Clicked="OnNotesClicked" Style="{StaticResource PrimaryButtonStyle}" />
-          </VerticalStackLayout>
-        </Border>
-        <Border Grid.Column="1" Padding="18">
-          <VerticalStackLayout Spacing="12">
-            <Label Text="✅" FontSize="34" />
-            <Label Text="Задачник" FontSize="22" FontAttributes="Bold" />
-            <Label Text="Сроки, статусы и напоминания." Style="{StaticResource MutedLabelStyle}" />
-            <Button Text="Открыть" Clicked="OnTasksClicked" Style="{StaticResource SecondaryButtonStyle}" />
-          </VerticalStackLayout>
-        </Border>
-      </Grid>
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
+                <Border Grid.Column="0" Padding="20" StrokeShape="RoundRectangle 18">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnNotesClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="10" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Image Source="notes.svg" WidthRequest="60" HeightRequest="60" HorizontalOptions="Center"/>
+                        <Label Text="Заметки" FontSize="18" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="1" Padding="20" StrokeShape="RoundRectangle 18">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnTasksClicked"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="10" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Image Source="tasks.svg" WidthRequest="60" HeightRequest="60" HorizontalOptions="Center"/>
+                        <Label Text="Задачник" FontSize="18" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+                    </VerticalStackLayout>
+                </Border>
 
-      <Border Padding="18">
+            </Grid>
+
+            <Border Padding="18">
         <VerticalStackLayout Spacing="10">
           <Label Text="Режим оформления" FontSize="20" FontAttributes="Bold" />
           <Label Text="Выберите светлый, темный или системный режим." Style="{StaticResource MutedLabelStyle}" />
