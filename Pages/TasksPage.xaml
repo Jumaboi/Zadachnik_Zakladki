@@ -63,7 +63,8 @@
                     <Button Text="⏸" Clicked="OnSetDeferredClicked" Style="{StaticResource TopIconButtonStyle}" />
                     <Button Text="✓" Clicked="OnSetCompletedClicked" Style="{StaticResource TopIconButtonStyle}" TextColor="{StaticResource SuccessColor}" />
                     <Button Text="🗑" Clicked="OnMoveToDeletedClicked" Style="{StaticResource TopIconButtonStyle}" TextColor="{StaticResource DangerColor}" />
-                  </HorizontalStackLayout>
+                                        <Button Text="✖" Clicked="OnDeleteForeverClicked" Style="{StaticResource TopIconButtonStyle}" TextColor="{StaticResource DangerColor}" IsVisible="{Binding IsDeleted}"/>
+                    </HorizontalStackLayout>
                 </VerticalStackLayout>
               </Border>
             </DataTemplate>

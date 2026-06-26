@@ -51,6 +51,7 @@
                     <Label Text="{Binding Title}" FontSize="20" FontAttributes="Bold" />
                     <Button Grid.Column="1" Text="↩" Clicked="OnRestoreNoteClicked" Style="{StaticResource TopIconButtonStyle}" IsVisible="{Binding IsDeleted}"/>
                     <Button Grid.Column="2" Text="🗑" Clicked="OnDeleteClicked" Style="{StaticResource TopIconButtonStyle}" TextColor="{StaticResource DangerColor}" />
+                                        <Button Grid.Column="3" Text="✖" Clicked="OnDeleteForeverClicked" Style="{StaticResource TopIconButtonStyle}" TextColor="{StaticResource DangerColor}" IsVisible="{Binding IsDeleted}"/>
                   </Grid>
                   <Label Text="{Binding DeletedBadge}" TextColor="{StaticResource DangerColor}" FontAttributes="Bold" />
                   <Label Text="{Binding Content}" LineBreakMode="WordWrap" Style="{StaticResource MutedLabelStyle}" />
