@@ -8,12 +8,14 @@ public partial class NotesPage : ContentPage
 {
     readonly NotesViewModel vm;
 
+    Picker? NotesFilterPickerControl => this.FindByName<Picker>("NotesFilterPicker");
+    Picker? NotesSortPickerControl => this.FindByName<Picker>("NotesSortPicker");
+
     public NotesPage()
     {
         InitializeComponent();
         BindingContext = vm = new NotesViewModel();
-        NotesFilterPicker.SelectedItem = vm.CurrentFilter;
-        NotesSortPicker.SelectedItem = vm.CurrentSortMode;
+        SyncPickers();
     }
 
     protected override async void OnAppearing()
@@ -102,21 +104,24 @@ public partial class NotesPage : ContentPage
 
     void SyncPickers()
     {
-        if (NotesFilterPicker.SelectedItem?.ToString() != vm.CurrentFilter)
-            NotesFilterPicker.SelectedItem = vm.CurrentFilter;
-        if (NotesSortPicker.SelectedItem?.ToString() != vm.CurrentSortMode)
-            NotesSortPicker.SelectedItem = vm.CurrentSortMode;
+        var filterPicker = NotesFilterPickerControl;
+        var sortPicker = NotesSortPickerControl;
+
+        if (filterPicker != null && filterPicker.SelectedItem?.ToString() != vm.CurrentFilter)
+            filterPicker.SelectedItem = vm.CurrentFilter;
+        if (sortPicker != null && sortPicker.SelectedItem?.ToString() != vm.CurrentSortMode)
+            sortPicker.SelectedItem = vm.CurrentSortMode;
     }
 
     async void OnNotesFilterChanged(object sender, System.EventArgs e)
     {
-        if (NotesFilterPicker.SelectedItem is string filter && filter != vm.CurrentFilter)
+        if (sender is Picker picker && picker.SelectedItem is string filter && filter != vm.CurrentFilter)
             await LoadNotesAsync(filter);
     }
 
     async void OnNotesSortChanged(object sender, System.EventArgs e)
     {
-        if (NotesSortPicker.SelectedItem is string sort && sort != vm.CurrentSortMode)
+        if (sender is Picker picker && picker.SelectedItem is string sort && sort != vm.CurrentSortMode)
             await LoadNotesAsync(sort: sort);
     }
 

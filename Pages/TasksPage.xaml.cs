@@ -9,12 +9,14 @@ public partial class TasksPage : ContentPage
 {
     readonly TasksViewModel vm;
 
+    Picker? TaskFilterPickerControl => this.FindByName<Picker>("TaskFilterPicker");
+    Picker? TaskSortPickerControl => this.FindByName<Picker>("TaskSortPicker");
+
     public TasksPage()
     {
         InitializeComponent();
         BindingContext = vm = new TasksViewModel();
-        TaskFilterPicker.SelectedItem = vm.CurrentStatusFilter;
-        TaskSortPicker.SelectedItem = vm.CurrentSortMode;
+        SyncPickers();
     }
 
     protected override async void OnAppearing()
@@ -114,21 +116,24 @@ public partial class TasksPage : ContentPage
 
     void SyncPickers()
     {
-        if (TaskFilterPicker.SelectedItem?.ToString() != vm.CurrentStatusFilter)
-            TaskFilterPicker.SelectedItem = vm.CurrentStatusFilter;
-        if (TaskSortPicker.SelectedItem?.ToString() != vm.CurrentSortMode)
-            TaskSortPicker.SelectedItem = vm.CurrentSortMode;
+        var filterPicker = TaskFilterPickerControl;
+        var sortPicker = TaskSortPickerControl;
+
+        if (filterPicker != null && filterPicker.SelectedItem?.ToString() != vm.CurrentStatusFilter)
+            filterPicker.SelectedItem = vm.CurrentStatusFilter;
+        if (sortPicker != null && sortPicker.SelectedItem?.ToString() != vm.CurrentSortMode)
+            sortPicker.SelectedItem = vm.CurrentSortMode;
     }
 
     async void OnTaskFilterChanged(object sender, System.EventArgs e)
     {
-        if (TaskFilterPicker.SelectedItem is string filter && filter != vm.CurrentStatusFilter)
+        if (sender is Picker picker && picker.SelectedItem is string filter && filter != vm.CurrentStatusFilter)
             await LoadTasksAsync(filter);
     }
 
     async void OnTaskSortChanged(object sender, System.EventArgs e)
     {
-        if (TaskSortPicker.SelectedItem is string sort && sort != vm.CurrentSortMode)
+        if (sender is Picker picker && picker.SelectedItem is string sort && sort != vm.CurrentSortMode)
             await LoadTasksAsync(sort: sort);
     }
 
@@ -179,7 +184,7 @@ public partial class TasksPage : ContentPage
         DateTime? reminder = null;
         if (UseDueDateCheckBox.IsChecked)
         {
-            due = DueDatePicker.Date.Add(DueTimePicker.Time);
+            due = DueDatePicker.Date.GetValueOrDefault(DateTime.UtcNow.AddHours(5).Date).Add(DueTimePicker.Time);
             if (UseReminderCheckBox.IsChecked) reminder = due;
         }
 
