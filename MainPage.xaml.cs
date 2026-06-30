@@ -33,13 +33,24 @@ public partial class MainPage : ContentPage
         Application.Current!.UserAppTheme = AppTheme.Unspecified;
     }
 
+    async Task AnimateClickAsync(object sender)
+    {
+        if (sender is VisualElement element)
+        {
+            await element.ScaleToAsync(0.96, 70);
+            await element.ScaleToAsync(1, 110, Easing.CubicOut);
+        }
+    }
+
     async void OnNotesClicked(object sender, System.EventArgs e)
     {
+        await AnimateClickAsync(sender);
         await Navigation.PushAsync(new Pages.NotesPage());
     }
 
     async void OnTasksClicked(object sender, System.EventArgs e)
     {
+        await AnimateClickAsync(sender);
         await Navigation.PushAsync(new Pages.TasksPage());
     }
 }

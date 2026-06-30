@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:MyNotesApp.ViewModels"
              x:Class="MyNotesApp.Pages.NotesPage"
-             BackgroundColor="{AppThemeBinding Light=White, Dark=#121212}"
+             BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
              Title="">
 
         <ContentPage.BindingContext>
@@ -32,19 +32,30 @@
           </Grid>
         </Border>
 
-        <Label Text="Фильтры" FontAttributes="Bold" />
-        <HorizontalStackLayout Spacing="8">
-          <Button x:Name="ActiveNotesButton" Text="Активные" Clicked="OnShowActiveClicked" Style="{StaticResource FilterButtonStyle}" />
-          <Button x:Name="DeletedNotesButton" Text="Удаленные" Clicked="OnShowDeletedClicked" Style="{StaticResource FilterButtonStyle}" />
-          <Button x:Name="AllNotesButton" Text="Все" Clicked="OnShowAllClicked" Style="{StaticResource FilterButtonStyle}" />
-        </HorizontalStackLayout>
-
-        <Label Text="Сортировка" FontAttributes="Bold" />
-        <HorizontalStackLayout Spacing="8">
-          <Button Text="Новые" Clicked="OnSortNewestClicked" Style="{StaticResource FilterButtonStyle}" />
-          <Button Text="Старые" Clicked="OnSortOldestClicked" Style="{StaticResource FilterButtonStyle}" />
-          <Button Text="А-Я" Clicked="OnSortTitleClicked" Style="{StaticResource FilterButtonStyle}" />
-        </HorizontalStackLayout>
+        <Border Padding="14">
+          <VerticalStackLayout Spacing="10">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+              <Label Text="Фильтр и сортировка" FontAttributes="Bold" VerticalOptions="Center" />
+              <Button Grid.Column="1" Text="Очистить" Clicked="OnResetFiltersClicked" Style="{StaticResource FilterButtonStyle}" />
+            </Grid>
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+              <Picker x:Name="NotesFilterPicker" Title="Фильтр" SelectedIndexChanged="OnNotesFilterChanged">
+                <Picker.Items>
+                  <x:String>Активные</x:String>
+                  <x:String>Удаленные</x:String>
+                  <x:String>Все</x:String>
+                </Picker.Items>
+              </Picker>
+              <Picker x:Name="NotesSortPicker" Grid.Column="1" Title="Сортировка" SelectedIndexChanged="OnNotesSortChanged">
+                <Picker.Items>
+                  <x:String>Новые сверху</x:String>
+                  <x:String>Старые сверху</x:String>
+                  <x:String>По заголовку</x:String>
+                </Picker.Items>
+              </Picker>
+            </Grid>
+          </VerticalStackLayout>
+        </Border>
 
         <CollectionView ItemsSource="{Binding Notes}" SelectionMode="None">
           <CollectionView.ItemTemplate>
@@ -88,11 +99,12 @@
     </ScrollView>
 
     <Grid x:Name="TopMenuOverlay" IsVisible="False" BackgroundColor="{StaticResource OverlayColor}" Padding="18">
+      <Grid.GestureRecognizers><TapGestureRecognizer Tapped="OnCloseMenuClicked" /></Grid.GestureRecognizers>
       <Border VerticalOptions="Start" HorizontalOptions="End" Padding="14" WidthRequest="250">
         <VerticalStackLayout Spacing="8">
+          <Button Text="Активные заметки" Clicked="OnMenuActiveClicked" Style="{StaticResource GhostButtonStyle}" />
           <Button Text="Удаленные заметки" Clicked="OnMenuDeletedClicked" Style="{StaticResource GhostButtonStyle}" />
           <Button Text="Настройки оформления" Clicked="OnMenuSettingsClicked" Style="{StaticResource GhostButtonStyle}" />
-          <Button Text="Закрыть" Clicked="OnCloseMenuClicked" Style="{StaticResource GhostButtonStyle}" />
         </VerticalStackLayout>
       </Border>
     </Grid>
