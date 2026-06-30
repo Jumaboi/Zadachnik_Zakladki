@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MyNotesApp.MainPage"
              Title="Главная"
-             BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#121212}">
+             BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
 
     <ScrollView>
 
@@ -11,8 +11,8 @@
 
             <!-- HEADER -->
             <Border Padding="22"
-                    Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#2C2C2C}"
-                    BackgroundColor="{AppThemeBinding Light=#F6F7F9, Dark=#1E1E1E}"
+                    Stroke="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}"
                     StrokeShape="RoundRectangle 18">
 
                 <VerticalStackLayout Spacing="16" HorizontalOptions="Center">
@@ -49,8 +49,8 @@
 
                 <Border Grid.Column="0"
                         Padding="20"
-                        Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#2C2C2C}"
-                        BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1E1E1E}"
+                        Stroke="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}"
                         StrokeShape="RoundRectangle 18">
 
                     <Border.GestureRecognizers>
@@ -61,7 +61,7 @@
                                          HorizontalOptions="Center"
                                          VerticalOptions="Center">
 
-                        <Image Source="notes.svg"
+                        <Image Source="notes.png"
                                WidthRequest="60"
                                HeightRequest="60"/>
 
@@ -74,8 +74,8 @@
 
                 <Border Grid.Column="1"
                         Padding="20"
-                        Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#2C2C2C}"
-                        BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1E1E1E}"
+                        Stroke="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}"
                         StrokeShape="RoundRectangle 18">
 
                     <Border.GestureRecognizers>
@@ -86,7 +86,7 @@
                                          HorizontalOptions="Center"
                                          VerticalOptions="Center">
 
-                        <Image Source="tasks.svg"
+                        <Image Source="tasks.png"
                                WidthRequest="60"
                                HeightRequest="60"/>
 
@@ -101,8 +101,8 @@
 
             <!-- THEME -->
             <Border Padding="18"
-                    Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#2C2C2C}"
-                    BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1E1E1E}"
+                    Stroke="{AppThemeBinding Light={StaticResource LightBorder}, Dark={StaticResource DarkBorder}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSurface}, Dark={StaticResource DarkSurface}}"
                     StrokeShape="RoundRectangle 18">
 
                 <VerticalStackLayout Spacing="10">

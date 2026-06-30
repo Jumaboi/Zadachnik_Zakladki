@@ -17,7 +17,9 @@
     <SupportedOSPlatformVersion>23.0</SupportedOSPlatformVersion>
   </PropertyGroup>
   <ItemGroup>
-    <MauiIcon Include="Resources\AppIcon\appicon.svg" />
+    <MauiIcon Include="Resources\AppIcon\appicon.svg" BaseSize="512,512" Color="#6D5DF6" />
+    <MauiImage Update="Resources\Images\notes.svg" BaseSize="64,64" />
+    <MauiImage Update="Resources\Images\tasks.svg" BaseSize="64,64" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.20" />

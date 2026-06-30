@@ -28,4 +28,14 @@
     <!-- ACCENT -->
     <Color x:Key="Accent">#6D5DF6</Color>
 
+    <!-- ALIASES / STATES -->
+    <Color x:Key="AccentColor">#6D5DF6</Color>
+    <Color x:Key="SuccessColor">#12805C</Color>
+    <Color x:Key="DangerColor">#DC2626</Color>
+    <Color x:Key="OverlayColor">#66000000</Color>
+    <Color x:Key="LightSoftSurfaceColor">#EEF2FF</Color>
+    <Color x:Key="DarkSoftSurfaceColor">#273449</Color>
+    <Color x:Key="LightSelectedSurface">#EDE9FE</Color>
+    <Color x:Key="DarkSelectedSurface">#312E81</Color>
+
 </ResourceDictionary>
