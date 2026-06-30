@@ -92,4 +92,48 @@
 
     </Style>
 
+    <Style x:Key="SecondaryButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+        <Setter Property="BackgroundColor" Value="{StaticResource SuccessColor}" />
+    </Style>
+
+    <Style x:Key="TopIconButtonStyle" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{StaticResource Accent}" />
+        <Setter Property="BorderColor" Value="Transparent" />
+        <Setter Property="CornerRadius" Value="18" />
+        <Setter Property="WidthRequest" Value="44" />
+        <Setter Property="HeightRequest" Value="44" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="FontSize" Value="18" />
+    </Style>
+
+    <Style x:Key="FilterButtonStyle" TargetType="Button" BasedOn="{StaticResource GhostButtonStyle}">
+        <Setter Property="HeightRequest" Value="38" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Padding" Value="10,4" />
+    </Style>
+
+    <Style TargetType="Picker">
+        <Setter Property="TextColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource LightText}" Dark="{StaticResource DarkText}"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="BackgroundColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource LightSurface}" Dark="{StaticResource DarkSurface}"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Entry">
+        <Setter Property="TextColor"><Setter.Value><AppThemeBinding Light="{StaticResource LightText}" Dark="{StaticResource DarkText}"/></Setter.Value></Setter>
+        <Setter Property="PlaceholderColor"><Setter.Value><AppThemeBinding Light="{StaticResource LightMutedText}" Dark="{StaticResource DarkMutedText}"/></Setter.Value></Setter>
+    </Style>
+
+    <Style TargetType="Editor">
+        <Setter Property="TextColor"><Setter.Value><AppThemeBinding Light="{StaticResource LightText}" Dark="{StaticResource DarkText}"/></Setter.Value></Setter>
+        <Setter Property="PlaceholderColor"><Setter.Value><AppThemeBinding Light="{StaticResource LightMutedText}" Dark="{StaticResource DarkMutedText}"/></Setter.Value></Setter>
+    </Style>
+
 </ResourceDictionary>

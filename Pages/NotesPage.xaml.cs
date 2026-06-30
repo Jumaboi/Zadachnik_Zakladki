@@ -12,6 +12,8 @@ public partial class NotesPage : ContentPage
     {
         InitializeComponent();
         BindingContext = vm = new NotesViewModel();
+        NotesFilterPicker.SelectedItem = vm.CurrentFilter;
+        NotesSortPicker.SelectedItem = vm.CurrentSortMode;
     }
 
     protected override async void OnAppearing()
@@ -21,6 +23,7 @@ public partial class NotesPage : ContentPage
         if (BindingContext is NotesViewModel vm)
             await vm.LoadAsync();
 
+        SyncPickers();
         Dispatcher.Dispatch(UpdateModeLabel);
     }
 
@@ -47,17 +50,42 @@ public partial class NotesPage : ContentPage
     {
         if (vm == null) return;
         await vm.LoadAsync(filter, sort);
+        SyncPickers();
         UpdateModeLabel();
     }
 
 
-    void OnToggleThemeClicked(object sender, System.EventArgs e)
+    async Task AnimateClickAsync(object sender)
     {
+        if (sender is VisualElement element)
+        {
+            await element.ScaleToAsync(0.94, 60);
+            await element.ScaleToAsync(1, 100, Easing.CubicOut);
+        }
+    }
+
+    async void OnToggleThemeClicked(object sender, System.EventArgs e)
+    {
+        await AnimateClickAsync(sender);
         Application.Current!.UserAppTheme = Application.Current.UserAppTheme == AppTheme.Dark ? AppTheme.Light : AppTheme.Dark;
     }
 
-    void OnOpenMenuClicked(object sender, System.EventArgs e) => TopMenuOverlay.IsVisible = true;
+    async void OnOpenMenuClicked(object sender, System.EventArgs e)
+    {
+        if (sender is VisualElement element)
+        {
+            await element.ScaleToAsync(0.92, 70);
+            await element.ScaleToAsync(1, 100);
+        }
+        TopMenuOverlay.IsVisible = true;
+    }
     void OnCloseMenuClicked(object sender, System.EventArgs e) => TopMenuOverlay.IsVisible = false;
+
+    async void OnMenuActiveClicked(object sender, System.EventArgs e)
+    {
+        TopMenuOverlay.IsVisible = false;
+        await LoadNotesAsync("Активные");
+    }
 
     async void OnMenuDeletedClicked(object sender, System.EventArgs e)
     {
@@ -71,6 +99,33 @@ public partial class NotesPage : ContentPage
         await DisplayAlertAsync("Настройки", "Светлая/темная тема переключается кнопкой рядом с меню. Общие настройки можно расширить здесь позже.", "OK");
     }
 
+
+    void SyncPickers()
+    {
+        if (NotesFilterPicker.SelectedItem?.ToString() != vm.CurrentFilter)
+            NotesFilterPicker.SelectedItem = vm.CurrentFilter;
+        if (NotesSortPicker.SelectedItem?.ToString() != vm.CurrentSortMode)
+            NotesSortPicker.SelectedItem = vm.CurrentSortMode;
+    }
+
+    async void OnNotesFilterChanged(object sender, System.EventArgs e)
+    {
+        if (NotesFilterPicker.SelectedItem is string filter && filter != vm.CurrentFilter)
+            await LoadNotesAsync(filter);
+    }
+
+    async void OnNotesSortChanged(object sender, System.EventArgs e)
+    {
+        if (NotesSortPicker.SelectedItem is string sort && sort != vm.CurrentSortMode)
+            await LoadNotesAsync(sort: sort);
+    }
+
+    async void OnResetFiltersClicked(object sender, System.EventArgs e)
+    {
+        await LoadNotesAsync("Активные", "Новые сверху");
+        await DisplayAlertAsync("Фильтры очищены", "Показаны активные заметки: новые сверху.", "OK");
+    }
+
     async void OnShowActiveClicked(object sender, System.EventArgs e) => await LoadNotesAsync("Активные");
     async void OnShowDeletedClicked(object sender, System.EventArgs e) => await LoadNotesAsync("Удаленные");
     async void OnShowAllClicked(object sender, System.EventArgs e) => await LoadNotesAsync("Все");
@@ -78,8 +133,9 @@ public partial class NotesPage : ContentPage
     async void OnSortOldestClicked(object sender, System.EventArgs e) => await LoadNotesAsync(sort: "Старые сверху");
     async void OnSortTitleClicked(object sender, System.EventArgs e) => await LoadNotesAsync(sort: "По заголовку");
 
-    void OnOpenAddNoteClicked(object sender, System.EventArgs e)
+    async void OnOpenAddNoteClicked(object sender, System.EventArgs e)
     {
+        await AnimateClickAsync(sender);
         AddNoteOverlay.IsVisible = true;
     }
 
@@ -115,6 +171,7 @@ public partial class NotesPage : ContentPage
         ChecklistEditor.Text = string.Empty;
         AddNoteOverlay.IsVisible = false;
         UpdateModeLabel();
+        await DisplayAlertAsync("Заметка сохранена", "Заметка добавлена в активный список.", "OK");
         await this.FadeToAsync(0.98, 80);
         await this.FadeToAsync(1, 140);
     }
@@ -125,11 +182,13 @@ public partial class NotesPage : ContentPage
         var note = vm.Notes.FirstOrDefault(n => n.Checklist.Any(i => i.Id == item.Id));
         if (note == null) return;
         await vm.ToggleChecklistItemAsync(note.Id, item.Id);
+        await DisplayAlertAsync("Чек-лист обновлен", $"Пункт «{item.Text}» изменен.", "OK");
     }
 
     async void OnDeleteClicked(object sender, System.EventArgs e)
     {
         if (vm == null || sender is not Button b || b.BindingContext is not Note note) return;
+        await AnimateClickAsync(sender);
         if (note.IsDeleted)
         {
             await DisplayAlertAsync("Уже в удаленных", "Для полного удаления нажмите ✖.", "OK");
@@ -137,21 +196,26 @@ public partial class NotesPage : ContentPage
         }
         await vm.MoveToDeletedAsync(note.Id);
         UpdateModeLabel();
+        await DisplayAlertAsync("Заметка удалена", "Заметка перенесена в удаленные.", "OK");
     }
 
     async void OnRestoreNoteClicked(object sender, System.EventArgs e)
     {
         if (vm == null || sender is not Button b || b.BindingContext is not Note note) return;
+        await AnimateClickAsync(sender);
         await vm.RestoreAsync(note.Id);
         UpdateModeLabel();
+        await DisplayAlertAsync("Заметка восстановлена", "Заметка снова в активном списке.", "OK");
     }
 
     async void OnDeleteForeverClicked(object sender, System.EventArgs e)
     {
         if (vm == null || sender is not Button b || b.BindingContext is not Note note) return;
+        await AnimateClickAsync(sender);
         var ok = await DisplayAlertAsync("Удалить навсегда", "Окончательно удалить заметку без восстановления?", "Да", "Нет");
         if (!ok) return;
         await vm.DeleteForeverAsync(note.Id);
         UpdateModeLabel();
+        await DisplayAlertAsync("Удалено", "Заметка окончательно удалена.", "OK");
     }
 }
