@@ -6,31 +6,41 @@ namespace MyNotesApp.Pages;
 
 public partial class NotesPage : ContentPage
 {
-    readonly NotesViewModel? vm;
+    readonly NotesViewModel vm;
 
     public NotesPage()
     {
         InitializeComponent();
-        vm = BindingContext as NotesViewModel;
-        UpdateModeLabel();
+        BindingContext = vm = new NotesViewModel();
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        if (vm != null) await vm.LoadAsync();
-        UpdateModeLabel();
+
+        if (BindingContext is NotesViewModel vm)
+            await vm.LoadAsync();
+
+        Dispatcher.Dispatch(UpdateModeLabel);
     }
 
     void UpdateModeLabel()
     {
-        if (vm == null) return;
-        NotesModeLabel.Text = vm.CurrentFilter switch
+        if (BindingContext is not NotesViewModel vm)
+            return;
+
+        if (NotesModeLabel == null)
+            return;
+
+        Dispatcher.Dispatch(() =>
         {
-            "Удаленные" => "Удаленные заметки",
-            "Все" => "Все заметки",
-            _ => "Активные заметки"
-        };
+            NotesModeLabel.Text = vm.CurrentFilter switch
+            {
+                "Удаленные" => "Удаленные заметки",
+                "Все" => "Все заметки",
+                _ => "Активные заметки"
+            };
+        });
     }
 
     async Task LoadNotesAsync(string? filter = null, string? sort = null)
@@ -40,7 +50,6 @@ public partial class NotesPage : ContentPage
         UpdateModeLabel();
     }
 
-    async void OnBackClicked(object sender, System.EventArgs e) => await Navigation.PopAsync();
 
     void OnToggleThemeClicked(object sender, System.EventArgs e)
     {
@@ -140,11 +149,6 @@ public partial class NotesPage : ContentPage
     async void OnDeleteForeverClicked(object sender, System.EventArgs e)
     {
         if (vm == null || sender is not Button b || b.BindingContext is not Note note) return;
-        if (!note.IsDeleted)
-        {
-            await DisplayAlertAsync("Сначала в удаленные", "Сначала нажмите 🗑, потом в разделе «Удаленные» можно удалить окончательно.", "OK");
-            return;
-        }
         var ok = await DisplayAlertAsync("Удалить навсегда", "Окончательно удалить заметку без восстановления?", "Да", "Нет");
         if (!ok) return;
         await vm.DeleteForeverAsync(note.Id);

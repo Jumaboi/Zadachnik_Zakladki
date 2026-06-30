@@ -2,55 +2,137 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MyNotesApp.MainPage"
-             Title="Главная">
-  <ScrollView>
-    <VerticalStackLayout Padding="24" Spacing="18">
-      <Border Padding="22" BackgroundColor="{AppThemeBinding Light={StaticResource LightSurfaceColor}, Dark={StaticResource DarkSurfaceColor}}">
-        <VerticalStackLayout Spacing="16" HorizontalOptions="Center">
-          <Border WidthRequest="92" HeightRequest="92" StrokeThickness="0" BackgroundColor="{StaticResource AccentColor}">
-            <Border.StrokeShape>
-              <RoundRectangle CornerRadius="28" />
-            </Border.StrokeShape>
-            <Label Text="✦" FontSize="44" TextColor="White" HorizontalOptions="Center" VerticalOptions="Center" />
-          </Border>
-          <Label x:Name="TitleLabel" Text="Задачник и Заметки" FontSize="30" FontAttributes="Bold" HorizontalTextAlignment="Center" Opacity="0" />
-          <Label Text="Быстрый доступ к заметкам и задачам. Разделы оформлены карточками — позже сюда можно добавить новые модули." Style="{StaticResource MutedLabelStyle}" HorizontalTextAlignment="Center" />
-        </VerticalStackLayout>
-      </Border>
+             Title="Главная"
+             BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#121212}">
 
+    <ScrollView>
+
+        <VerticalStackLayout Padding="24" Spacing="18">
+
+            <!-- HEADER -->
+            <Border Padding="22"
+                    Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#2C2C2C}"
+                    BackgroundColor="{AppThemeBinding Light=#F6F7F9, Dark=#1E1E1E}"
+                    StrokeShape="RoundRectangle 18">
+
+                <VerticalStackLayout Spacing="16" HorizontalOptions="Center">
+
+                    <Border WidthRequest="92"
+                            HeightRequest="92"
+                            StrokeThickness="0"
+                            BackgroundColor="#6D5DF6"
+                            StrokeShape="RoundRectangle 28">
+
+                        <Label Text="✦"
+                               FontSize="44"
+                               TextColor="White"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+                    </Border>
+
+                    <Label x:Name="TitleLabel"
+                           Text="Задачник и Заметки"
+                           FontSize="30"
+                           FontAttributes="Bold"
+                           HorizontalTextAlignment="Center"
+                           Opacity="0"/>
+
+                    <Label Text="Быстрый доступ к заметкам и задачам. Разделы оформлены карточками — позже сюда можно добавить новые модули."
+                           TextColor="{AppThemeBinding Light=#64748B, Dark=#CBD5E1}"
+                           HorizontalTextAlignment="Center"/>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- CARDS -->
             <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
-                <Border Grid.Column="0" Padding="20" StrokeShape="RoundRectangle 18">
+
+                <Border Grid.Column="0"
+                        Padding="20"
+                        Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#2C2C2C}"
+                        BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1E1E1E}"
+                        StrokeShape="RoundRectangle 18">
+
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnNotesClicked"/>
                     </Border.GestureRecognizers>
-                    <VerticalStackLayout Spacing="10" HorizontalOptions="Center" VerticalOptions="Center">
-                        <Image Source="notes.svg" WidthRequest="60" HeightRequest="60" HorizontalOptions="Center"/>
-                        <Label Text="Заметки" FontSize="18" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+
+                    <VerticalStackLayout Spacing="10"
+                                         HorizontalOptions="Center"
+                                         VerticalOptions="Center">
+
+                        <Image Source="notes.svg"
+                               WidthRequest="60"
+                               HeightRequest="60"/>
+
+                        <Label Text="Заметки"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"/>
                     </VerticalStackLayout>
                 </Border>
-                <Border Grid.Column="1" Padding="20" StrokeShape="RoundRectangle 18">
+
+                <Border Grid.Column="1"
+                        Padding="20"
+                        Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#2C2C2C}"
+                        BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1E1E1E}"
+                        StrokeShape="RoundRectangle 18">
+
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnTasksClicked"/>
                     </Border.GestureRecognizers>
-                    <VerticalStackLayout Spacing="10" HorizontalOptions="Center" VerticalOptions="Center">
-                        <Image Source="tasks.svg" WidthRequest="60" HeightRequest="60" HorizontalOptions="Center"/>
-                        <Label Text="Задачник" FontSize="18" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+
+                    <VerticalStackLayout Spacing="10"
+                                         HorizontalOptions="Center"
+                                         VerticalOptions="Center">
+
+                        <Image Source="tasks.svg"
+                               WidthRequest="60"
+                               HeightRequest="60"/>
+
+                        <Label Text="Задачник"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"/>
                     </VerticalStackLayout>
                 </Border>
 
             </Grid>
 
-            <Border Padding="18">
-        <VerticalStackLayout Spacing="10">
-          <Label Text="Режим оформления" FontSize="20" FontAttributes="Bold" />
-          <Label Text="Выберите светлый, темный или системный режим." Style="{StaticResource MutedLabelStyle}" />
-          <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
-            <Button Text="Светлый" Clicked="OnLightThemeClicked" Style="{StaticResource GhostButtonStyle}" />
-            <Button Grid.Column="1" Text="Темный" Clicked="OnDarkThemeClicked" Style="{StaticResource GhostButtonStyle}" />
-            <Button Grid.Column="2" Text="Система" Clicked="OnSystemThemeClicked" Style="{StaticResource GhostButtonStyle}" />
-          </Grid>
+            <!-- THEME -->
+            <Border Padding="18"
+                    Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#2C2C2C}"
+                    BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1E1E1E}"
+                    StrokeShape="RoundRectangle 18">
+
+                <VerticalStackLayout Spacing="10">
+
+                    <Label Text="Режим оформления"
+                           FontSize="20"
+                           FontAttributes="Bold"/>
+
+                    <Label Text="Выберите светлый, темный или системный режим."
+                           TextColor="{AppThemeBinding Light=#64748B, Dark=#CBD5E1}"/>
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+
+                        <Button Text="Светлый"
+                                Clicked="OnLightThemeClicked"/>
+
+                        <Button Text="Темный"
+                                Grid.Column="1"
+                                Clicked="OnDarkThemeClicked"/>
+
+                        <Button Text="Система"
+                                Grid.Column="2"
+                                Clicked="OnSystemThemeClicked"/>
+
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Border>
+
         </VerticalStackLayout>
-      </Border>
-    </VerticalStackLayout>
-  </ScrollView>
+
+    </ScrollView>
 </ContentPage>

@@ -3,24 +3,27 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:MyNotesApp.ViewModels"
              x:Class="MyNotesApp.Pages.TasksPage"
-             Title="Задачник">
-  <ContentPage.BindingContext>
-    <vm:TasksViewModel />
-  </ContentPage.BindingContext>
+             BackgroundColor="{AppThemeBinding Light=White, Dark=#121212}"
+             Title="">
 
-  <Grid>
-    <ScrollView>
-      <VerticalStackLayout Padding="18" Spacing="16">
-        <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="10">
-          <Button Text="‹" Clicked="OnBackClicked" Style="{StaticResource TopIconButtonStyle}" />
-          <VerticalStackLayout Grid.Column="1" Spacing="2">
-            <Label Text="Задачник" FontSize="28" FontAttributes="Bold" />
-            <Label x:Name="TasksModeLabel" Text="Активные задачи" Style="{StaticResource MutedLabelStyle}" />
-          </VerticalStackLayout>
-          <Button Grid.Column="2" Text="☾" Clicked="OnToggleThemeClicked" Style="{StaticResource TopIconButtonStyle}" />
-          <Button Grid.Column="3" Text="⋯" Clicked="OnOpenMenuClicked" Style="{StaticResource TopIconButtonStyle}" />
+    <ContentPage.BindingContext>
+        <vm:TasksViewModel />
+    </ContentPage.BindingContext>
+
+    <NavigationPage.TitleView>
+        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+            <VerticalStackLayout VerticalOptions="Center" Spacing="0">
+                <Label Text="Задачник" FontSize="20" FontAttributes="Bold" TextColor="White" />
+                <Label x:Name="TasksModeLabel" Text="Активные задачи" FontSize="12" TextColor="#D6D6D6" />
+            </VerticalStackLayout>
+
+            <Button Grid.Column="1" Text="☾" Clicked="OnToggleThemeClicked" Style="{StaticResource TopIconButtonStyle}" />
+            <Button Grid.Column="2" Text="⋯" Clicked="OnOpenMenuClicked" Style="{StaticResource TopIconButtonStyle}" />
         </Grid>
-
+    </NavigationPage.TitleView>
+    <Grid>
+        <ScrollView>
+          <VerticalStackLayout Padding="18" Spacing="16">
         <Border Padding="18">
           <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
             <Label Text="Дата создания ставится автоматически. Срок выполнения можно оставить пустым и включить только при необходимости." Style="{StaticResource MutedLabelStyle}" />

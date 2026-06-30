@@ -7,19 +7,22 @@ namespace MyNotesApp.Pages;
 
 public partial class TasksPage : ContentPage
 {
-    readonly TasksViewModel? vm;
+    readonly TasksViewModel vm;
 
     public TasksPage()
     {
         InitializeComponent();
-        vm = BindingContext as TasksViewModel;
-        UpdateModeLabel();
+        BindingContext = vm = new TasksViewModel();
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await ReloadAsync();
+
+        if (vm != null)
+            await vm.LoadAsync();
+
+        UpdateModeLabel();
     }
 
     async Task ReloadAsync()
@@ -32,14 +35,19 @@ public partial class TasksPage : ContentPage
 
     void UpdateModeLabel()
     {
-        if (vm == null) return;
-        TasksModeLabel.Text = vm.CurrentStatusFilter switch
+        if (vm == null || TasksModeLabel == null)
+            return;
+
+        Dispatcher.Dispatch(() =>
         {
-            "Удаленные" => "Удаленные задачи",
-            "Выполненные" => "Выполненные задачи",
-            "Все" => "Все задачи",
-            _ => "Активные задачи"
-        };
+            TasksModeLabel.Text = vm.CurrentStatusFilter switch
+            {
+                "Удаленные" => "Удаленные задачи",
+                "Выполненные" => "Выполненные задачи",
+                "Все" => "Все задачи",
+                _ => "Активные задачи"
+            };
+        });
     }
 
     async Task LoadTasksAsync(string? filter = null, string? sort = null)
@@ -48,8 +56,6 @@ public partial class TasksPage : ContentPage
         await vm.LoadAsync(filter, sort);
         UpdateModeLabel();
     }
-
-    async void OnBackClicked(object sender, System.EventArgs e) => await Navigation.PopAsync();
 
     void OnToggleThemeClicked(object sender, System.EventArgs e)
     {
